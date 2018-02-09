@@ -14,7 +14,7 @@ module.exports = function(_, passport) {
     getSignupPage: function(req, res) {
       return res.render('signup');
     },
-    postSignupPage: passport.authenticate('signup.local', {
+    postSignupPage: passport.authenticate('local.signup', {
       successRedirect: '/home',
       failureRedirect: '/signup',
       failureFlash: true }
