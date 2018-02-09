@@ -12,17 +12,30 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    User.findOne({ username: username }, function(err, user) {
+passport.use(
+  'login.signup',
+  new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password',
+    passReqToCallback: true
+  },
+  function(req, email, password, done) {
+    User.findOne({ email: email }, function(err, user) {
       if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
+      if(user) {
+        return done(null, false, req.flash('error', 'This email already exists'));
       }
-      if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
+
+      const newUser = new User();
+      newUser.email = req.body.email;
+      newUser.password = req.body.password;
+      newUser.username = req.body.username;
+
+      newUser.save(function(err) {
+        if(err) { return done(err); }
+
+        return done(null, newUser);
+      });
     });
   }
-));
+)
