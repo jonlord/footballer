@@ -28,7 +28,7 @@ passport.use(
 
       const newUser = new User();
       newUser.email = req.body.email;
-      newUser.password = req.body.password;
+      newUser.password = newUser.encryptPassword(req.body.password);
       newUser.username = req.body.username;
 
       newUser.save(function(err) {
